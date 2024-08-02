@@ -19,8 +19,8 @@ Open your terminal and run the following commands to install the required module
 **Configure the Script**   
 
 Open the script file and replace the placeholders with the appropriate values:
-   - `channelTwitchID`: The Twitch User ID of the broadcaster.
-   - `channelTwitchName`: The Twitch username of the broadcaster.
+   - `channelTwitchID: The Twitch User ID of the broadcaster.`
+   - `channelTwitchName: The Twitch username of the broadcaster.`
 
    **Example:**
    ```
@@ -41,8 +41,8 @@ Open the script file and replace the placeholders with the appropriate values:
 2. **Replace Tokens**
 
    In the script, replace the placeholders with your generated token and client ID:
-   - `userToken`: Your access token.
-   - `clientId`: Your client ID.
+   - `userToken: Your access token.`
+   - `clientId: Your client ID.`
 
    **Example (Fake Tokens):**
    ```

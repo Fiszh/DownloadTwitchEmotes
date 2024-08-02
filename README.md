@@ -21,7 +21,7 @@ Open your terminal and run the following commands to install the required module
 
 **Configure the Script**   
 
-Visit [Twitch Channel ID Converter](https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/) to retrieve Twitch channel IDs.
+Visit [Twitch Channel ID Converter](https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/) to retrieve Twitch channel ID.
 
 Open the script file and replace the placeholders with the appropriate values:
    - `channelTwitchID: The Twitch User ID of the broadcaster.`

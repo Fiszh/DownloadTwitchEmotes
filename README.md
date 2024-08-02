@@ -7,8 +7,10 @@ It includes the `fs` and `path` modules needed for this script.
 2. **Install Dependencies**
 
 Open your terminal and run the following commands to install the required modules:
-   ```bash   npm install axios   ```
-   ```bash   npm install fluent-ffmpeg   ```
+   ```
+   npm install axios
+   npm install fluent-ffmpeg
+   ```
 
 ## Usage1. 
 
@@ -19,7 +21,10 @@ Open the script file and replace the placeholders with the appropriate values:
    - `channelTwitchName`: The Twitch username of the broadcaster.
 
    **Example:**
-   ```javascript   channelTwitchID: 71092938   channelTwitchName: xqc   ```
+   ```
+   channelTwitchID: 71092938   
+   channelTwitchName: xqc
+   ```
 
 2. **Additional Settings**
 
@@ -38,4 +43,7 @@ Open the script file and replace the placeholders with the appropriate values:
    - `clientId`: Your client ID.
 
    **Example (Fake Tokens):**
-   ```javascript   userToken: k7zv8n3k5qrp9x2c5sy6hj1m4tb7wl   clientId: bx173zkkhnfdvqwja9u318sm4ty5c2   ```
+   ```
+   userToken: k7zv8n3k5qrp9x2c5sy6hj1m4tb7wl
+   clientId: bx173zkkhnfdvqwja9u318sm4ty5c2
+   ```

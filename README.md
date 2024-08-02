@@ -1,7 +1,9 @@
 # DownloadTwitchEmotesA JavaScript tool to download Twitch, 7TV, FrankerFaceZ, and BetterTwitchTV emotes for a specified user.
-## Installation1. 
+## Installation. 
+
 **Download Node.js**
-Ensure that Node.js is installed on your machine. 
+
+Ensure that Node.js is installed on your machine.
 It includes the `fs` and `path` modules needed for this script.
 
 2. **Install Dependencies**
@@ -12,7 +14,7 @@ Open your terminal and run the following commands to install the required module
    npm install fluent-ffmpeg
    ```
 
-## Usage1. 
+## Usage. 
 
 **Configure the Script**   
 

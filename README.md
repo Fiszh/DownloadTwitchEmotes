@@ -1,4 +1,4 @@
-"# DownloadTwitchEmotesA JavaScript tool to download Twitch, 7TV, FrankerFaceZ, and BetterTwitchTV emotes for a specified user.
+# DownloadTwitchEmotesA JavaScript tool to download Twitch, 7TV, FrankerFaceZ, and BetterTwitchTV emotes for a specified user.
 ## Installation1. 
 **Download Node.js**
 Ensure that Node.js is installed on your machine. 

@@ -4,12 +4,26 @@ const axios = require('axios');
 const ffmpeg = require('fluent-ffmpeg');
 
 // SETTINGS
-let channelTwitchID = '71092938';
-let channelTwitchName = 'xqc';
+let channelTwitchID = '104391402';
 let emotesToDownload = 5; // Ensure this is greater than 0
 let downloadGlobalEmotes = true;
 
-let convertTTVEmotes = true; // MIGHT BE BUGGY
+let dowloadSettings = {
+    "SevenTV": true,
+    "BTTV": true,
+    "FFZ": true,
+    "DowloadAllEmotes": false,
+    "ConvertEmotes": true
+};
+
+// BUGGY WITH NON TWITCH EMOTES
+let convertSettings = {
+    "TTV": true, // TWITCH
+    "7TV": false, // SevenTV
+    "BTTV": false, // BetterTwitchTv
+    "FFZ": false, // FrankerFaceZ
+    "format": ".webp" // MAKE SURE THIS STARTS WITH A DOT
+}
 
 // INPUT YOUR ACCESS TOKEN AND CLIENT ID IF YOU WANT TO DOWLOAD CHANNEL TWITCH EMOTES
 // https://twitchtokengenerator.com/
@@ -17,7 +31,7 @@ let convertTTVEmotes = true; // MIGHT BE BUGGY
 let userToken = '';
 let clientId = '';
 
-// DO NOT CHANGE ANYTHING BELOW
+// DO NOT CHANGE ANYTHING BELOW IF YOU DO NOT KNOW WHAT YOU ARE DOING
 const FgBlack = "\x1b[30m";
 const FgRed = "\x1b[31m";
 const FgGreen = "\x1b[32m";
@@ -26,6 +40,11 @@ const FgBlue = "\x1b[34m";
 const FgMagenta = "\x1b[35m";
 const FgCyan = "\x1b[36m";
 const FgWhite = "\x1b[37m";
+
+if (!convertSettings['format'].startsWith('.')) {
+    console.log(FgRed + 'FAILED! format in convertSettings does not start with a dot.' + FgWhite)
+    return;
+}
 
 // TTV
 let TTVEmoteData = [];
@@ -47,28 +66,6 @@ let BBTVEmoteData = [];
 
 let allEmoteData = [];
 
-const gqlUrl = 'https://7tv.io/v3/gql';
-const payload = {
-    operationName: "SearchUsers",
-    variables: {
-        query: channelTwitchName,
-    },
-    query: `
-    query SearchUsers($query: String!) {
-      users(query: $query) {
-        id
-        username
-        display_name
-        roles
-        style {
-          color
-        }
-        avatar_url
-      }
-    }
-  `
-};
-
 async function LoadEmotes() {
     // TTV
     if (userToken != '' && clientId != '') {
@@ -78,29 +75,35 @@ async function LoadEmotes() {
     }
 
     // 7TV
-    try {
-        await get7TVUserID();
-        await get7TVEmoteSetID();
-        await fetch7TVEmoteData('global');
-        await fetch7TVEmoteData(SevenTVemoteSetId);
-    } catch (err) {
-        console.log('ERROR GETTING 7TV EMOTES')
+    if (dowloadSettings["SevenTV"]) {
+        try {
+            await get7TVUserID();
+            await get7TVEmoteSetID();
+            await fetch7TVEmoteData('global');
+            await fetch7TVEmoteData(SevenTVemoteSetId);
+        } catch (err) {
+            console.log('ERROR GETTING 7TV EMOTES')
+        }
     }
 
     // FFZ
-    try {
-        await fetchFFZGlobalEmotes();
-        await fetchFFZEmotes();
-    } catch (err) {
-        console.log('ERROR GETTING FFZ EMOTES')
+    if (dowloadSettings["FFZ"]) {
+        try {
+            await fetchFFZGlobalEmotes();
+            await fetchFFZEmotes();
+        } catch (err) {
+            console.log('ERROR GETTING FFZ EMOTES')
+        }
     }
 
     // BTTV
-    try {
-        await fetchBTTVGlobalEmoteData();
-        await fetchBTTVEmoteData();
-    } catch (err) {
-        console.log('ERROR GETTING BTTV EMOTES')
+    if (dowloadSettings["BTTV"]) {
+        try {
+            await fetchBTTVGlobalEmoteData();
+            await fetchBTTVEmoteData();
+        } catch (err) {
+            console.log('ERROR GETTING BTTV EMOTES')
+        }
     }
 
     if (downloadGlobalEmotes) {
@@ -133,15 +136,15 @@ LoadEmotes();
 
 async function get7TVUserID() {
     try {
-        const response = await axios.post(gqlUrl, payload, {
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        const response = await fetch(`https://7tv.io/v3/users/twitch/${channelTwitchID}`);
 
-        const data = response.data;
-        if (data && data.data && data.data.users) {
-            const user = data.data.users[0];
+        if (!response.ok) {
+            throw false
+        }
+
+        const data = await response.json();
+        if (data && data.user && data.user.id) {
+            const user = data.user;
             if (user) {
                 SevenTVID = user.id;
                 console.log(FgBlue + '7TV User ID:', SevenTVID + FgWhite);
@@ -322,9 +325,21 @@ if (!fs.existsSync(emotesDir)) {
     fs.mkdirSync(emotesDir);
 }
 
+function getFileExtension(url) {
+    const filename = url.split('/').pop();
+    const extension = filename.split('.').pop();
+    return extension;
+}
+
 async function downloadEmotes() {
     const selectedEmotes = [];
-    while (selectedEmotes.length < emotesToDownload && allEmoteData.length > 0) {
+    let howMuchEmotes = emotesToDownload
+
+    if (dowloadSettings["DowloadAllEmotes"]) {
+        howMuchEmotes = allEmoteData.length
+    }
+
+    while (selectedEmotes.length < howMuchEmotes && allEmoteData.length > 0) {
         const randomIndex = Math.floor(Math.random() * allEmoteData.length);
         selectedEmotes.push(allEmoteData.splice(randomIndex, 1)[0]);
     }
@@ -334,30 +349,44 @@ async function downloadEmotes() {
         const name = sanitizeFileName(emote.name);
         const originalExtension = path.extname(url).split('?')[0] || '.webp';
         const originalFilepath = path.join(emotesDir, name + originalExtension);
-        const webpFilepath = path.join(emotesDir, name + '.webp');
 
         console.log(`Downloading ${name} from ${url}...`);
         await downloadFile(url, originalFilepath);
 
-        if (!originalFilepath.endsWith('.webp') && originalFilepath.endsWith('.0') && convertTTVEmotes) {
-            let newFilepath = originalFilepath.replace(/0$/, 'webp');
+        const format = convertSettings["format"]
+        if (!originalFilepath.endsWith(format) && dowloadSettings["ConvertEmotes"]) {
+            if (convertSettings[emote.site]) {
+                const extension = await getFileExtension(url)
+                const newFilepath = originalFilepath.replace(new RegExp(`${extension}$`), format.substring(1));
 
-            ffmpeg(originalFilepath)
-                .output(newFilepath)
-                .outputOptions('-vf', 'scale=iw:ih', '-q:v', '125')
-                .on('end', () => {
-                    console.log(`${originalFilepath} Converted to ${newFilepath}`);
-
-                    fs.unlink(originalFilepath, (err) => {
-                        if (err) {
-                            console.error('Error deleting original file:', err);
-                        }
-                    });
-                })
-                .on('error', (err) => {
-                    console.error('Error:', err);
-                })
-                .run();
+                ffmpeg(originalFilepath)
+                    .output(newFilepath)
+                    .outputOptions('-vf', 'scale=iw:ih', '-q:v', '125', '-r', '24')
+                    .on('end', () => {
+                        console.log(`${originalFilepath} Converted to ${newFilepath}`);
+                        fs.unlink(originalFilepath, (err) => {
+                            if (err) {
+                                console.error('Error deleting original file:', err);
+                            }
+                        });
+                    })
+                    .on('error', (err) => {
+                        fs.access(newFilepath, fs.constants.F_OK, (err) => {
+                            if (!err) {
+                                fs.unlink(newFilepath, (unlinkErr) => {
+                                    if (unlinkErr) {
+                                        console.error('Error deleting new file after conversion failure:', unlinkErr);
+                                    } else {
+                                        console.log(`Original file ${newFilepath} deleted successfully after conversion failure.`);
+                                    }
+                                });
+                            } else {
+                                console.error(`New file ${newFilepath} was not created.`);
+                            }
+                        });
+                    })
+                    .run()
+            }
         }
     }
     console.log("Download complete.");

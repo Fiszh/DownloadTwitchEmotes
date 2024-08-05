@@ -25,12 +25,10 @@ Visit [Twitch Channel ID Converter](https://www.streamweasels.com/tools/convert-
 
 Open the script file and replace the placeholders with the appropriate values:
    - `channelTwitchID: The Twitch User ID of the broadcaster.`
-   - `channelTwitchName: The Twitch username of the broadcaster.`
 
 **Example:**
    ```
    channelTwitchID: 71092938   
-   channelTwitchName: xqc
    ```
 
  **Additional Settings**

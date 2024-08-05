@@ -4,7 +4,7 @@ const axios = require('axios');
 const ffmpeg = require('fluent-ffmpeg');
 
 // SETTINGS
-let channelTwitchID = '104391402';
+let channelTwitchID = '71092938';
 let emotesToDownload = 5; // Ensure this is greater than 0
 let downloadGlobalEmotes = true;
 

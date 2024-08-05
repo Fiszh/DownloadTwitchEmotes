@@ -20,7 +20,7 @@ let dowloadSettings = {
 let convertSettings = {
     "TTV": true, // TWITCH
     "7TV": false, // SevenTV
-    "BTTV": false, // BetterTwitchTv
+    "BTTV": false, // BetterTwitchTV
     "FFZ": false, // FrankerFaceZ
     "format": ".webp" // MAKE SURE THIS STARTS WITH A DOT
 }
